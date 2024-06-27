@@ -1,84 +1,36 @@
 <template>
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="scrolling-boxes left">
-        <div v-for="n in 10" :key="n" class="box"></div>
-      </div>
-      <div class="copyright">© 2024 Fictional Company. All rights reserved.</div>
-      <div class="scrolling-boxes right">
-        <div v-for="n in 10" :key="n" class="box"></div>
-      </div>
+  <div class="footer">
+    <CubuAnimation class="left-cube" cubeSize="6vmin" />
+    <div class="copyright">
+      © 2024 Fictional Company. All rights reserved.
     </div>
-  </footer>
+    <CubuAnimation class="right-cube" cubeSize="6vmin" />
+  </div>
 </template>
 
-<script setup>
-import { onMounted } from 'vue'
-import { gsap } from 'gsap'
-
-onMounted(() => {
-  gsap.to('.left .box', {
-    x: '-=100vw',
-    repeat: -1,
-    duration: 10,
-    ease: 'none',
-    stagger: {
-      each: 1,
-      repeat: -1,
-    }
-  })
-
-  gsap.to('.right .box', {
-    x: '+=100vw',
-    repeat: -1,
-    duration: 10,
-    ease: 'none',
-    stagger: {
-      each: 1,
-      repeat: -1,
-    }
-  })
-})
+<script setup lang="ts">
+import CubuAnimation from "@/components/CubuAnimation.vue";
 </script>
 
 <style scoped>
 .footer {
-  background-color: #333;
-  color: #fff;
-  padding: 20px 0;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-}
-
-.footer-content {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.scrolling-boxes {
-  display: flex;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.scrolling-boxes.left {
-  left: 0;
-}
-
-.scrolling-boxes.right {
-  right: 0;
-  flex-direction: row-reverse;
-}
-
-.box {
-  width: 50px;
+  width: 100%;
   height: 50px;
-  background-color: #555;
-  margin: 0 5px;
+  background-color: transparent;
+  color: gray;
+  padding: 0 10px 30px 10px;
+}
+
+.copyright {
+  text-align: center;
+  flex-grow: 1;
+  color: #cccccc;
+}
+
+.left-cube, .right-cube {
+  flex-shrink: 0;
 }
 </style>
