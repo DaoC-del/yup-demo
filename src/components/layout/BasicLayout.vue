@@ -1,6 +1,6 @@
-<!-- BasicLayout.vue -->
+<!-- src/components/layout/BasicLayout.vue -->
 <template>
-  <div class="layout container mx-auto">
+  <div class="layout">
     <header :class="headerClass">
       <slot name="header"></slot>
     </header>
@@ -35,6 +35,6 @@ const footerClass = computed(() => `${props.footerBackgroundColor} ${props.slotP
 
 <style lang="scss" scoped>
 .layout {
-  @apply flex flex-col min-h-screen max-w-screen-lg mx-auto;
+  @apply flex flex-col min-h-screen w-full;
 }
 </style>
