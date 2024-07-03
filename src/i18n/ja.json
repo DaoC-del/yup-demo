@@ -1,0 +1,21 @@
+{
+    "header": "ヘッダーの内容",
+    "step": "ステップの内容",
+    "main": "メインコンテンツ",
+    "footer": "フッターの内容",
+    "form": {
+      "title": "クレジットカードフォーム",
+      "name": "名前",
+      "number": "カード番号",
+      "expiry": "有効期限",
+      "cvv": "CVV",
+      "errors": {
+        "required": "このフィールドは必須です",
+        "invalid": "無効な入力",
+        "cardNumber": "無効なカード番号",
+        "expiry": "無効な有効期限",
+        "cvv": "無効なCVV"
+      }
+    }
+  }
+  

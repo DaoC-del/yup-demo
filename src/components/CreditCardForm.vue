@@ -1,144 +1,54 @@
 <template>
-  <div class="credit-card-form">
-    <form @submit.prevent="handleSubmit">
-      <div>
-        <label for="cardNumber">カード番号:</label>
-        <input id="cardNumber" v-model="form.cardNumber" type="text" />
-        <span>{{ errors.cardNumber }}</span>
-      </div>
-
-      <div>
-        <label for="expiryDate">有効期限:</label>
-        <input id="expiryDate" v-model="form.expiryDate" type="text" />
-        <span>{{ errors.expiryDate }}</span>
-      </div>
-
-      <div>
-        <label for="cvv">CVV:</label>
-        <input id="cvv" v-model="form.cvv" type="text" />
-        <span>{{ errors.cvv }}</span>
-      </div>
-
-      <div>
-        <label for="cardHolderName">カード名義人:</label>
-        <input id="cardHolderName" v-model="form.cardHolderName" type="text" />
-        <span>{{ errors.cardHolderName }}</span>
-      </div>
-
-      <button type="submit">送信</button>
-    </form>
-  </div>
+  <form @submit.prevent="validateForm" class="space-y-4">
+    <div>
+      <label for="cardNumber" class="block text-sm font-medium text-gray-700">{{ t('creditCardForm.cardNumber') }}</label>
+      <input type="text" id="cardNumber" v-model="cardNumber" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+      <span v-if="errors.cardNumber" class="text-red-600 text-sm">{{ errors.cardNumber }}</span>
+    </div>
+    <div>
+      <label for="cardHolder" class="block text-sm font-medium text-gray-700">{{ t('creditCardForm.cardHolder') }}</label>
+      <input type="text" id="cardHolder" v-model="cardHolder" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+      <span v-if="errors.cardHolder" class="text-red-600 text-sm">{{ errors.cardHolder }}</span>
+    </div>
+    <div>
+      <label for="expirationDate" class="block text-sm font-medium text-gray-700">{{ t('creditCardForm.expirationDate') }}</label>
+      <input type="text" id="expirationDate" v-model="expirationDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+      <span v-if="errors.expirationDate" class="text-red-600 text-sm">{{ errors.expirationDate }}</span>
+    </div>
+    <div>
+      <label for="cvv" class="block text-sm font-medium text-gray-700">{{ t('creditCardForm.cvv') }}</label>
+      <input type="text" id="cvv" v-model="cvv" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+      <span v-if="errors.cvv" class="text-red-600 text-sm">{{ errors.cvv }}</span>
+    </div>
+    <button type="submit" class="mt-4 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Submit</button>
+  </form>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import * as Yup from 'yup';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { object, string } from 'yup';
+import { useField, useForm } from 'vee-validate';
 
-interface Form {
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  cardHolderName: string;
-}
+const { t } = useI18n();
 
-interface Errors {
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  cardHolderName: string;
-}
-
-// Define the validation schema using Yup
-const schema = Yup.object().shape({
-  cardNumber: Yup.string()
-      .required('カード番号は必須です')
-      .matches(/^\d{16}$/, 'カード番号は16桁でなければなりません'),
-  expiryDate: Yup.string()
-      .required('有効期限は必須です')
-      .matches(/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/, '有効期限はMM/YY形式でなければなりません'),
-  cvv: Yup.string()
-      .required('CVVは必須です')
-      .matches(/^\d{3,4}$/, 'CVVは3桁または4桁でなければなりません'),
-  cardHolderName: Yup.string()
-      .required('カード名義人は必須です')
-      .min(2, 'カード名義人は少なくとも2文字でなければなりません')
+const schema = object({
+  cardNumber: string().required(t('creditCardForm.errors.required')).matches(/^\d{16}$/, t('creditCardForm.errors.cardNumber')),
+  cardHolder: string().required(t('creditCardForm.errors.required')).min(3, t('creditCardForm.errors.cardHolder')),
+  expirationDate: string().required(t('creditCardForm.errors.required')).matches(/^\d{2}\/\d{2}$/, t('creditCardForm.errors.expirationDate')),
+  cvv: string().required(t('creditCardForm.errors.required')).matches(/^\d{3,4}$/, t('creditCardForm.errors.cvv')),
 });
 
-// Define the form data and errors using reactive
-const form = reactive<Form>({
-  cardNumber: '',
-  expiryDate: '',
-  cvv: '',
-  cardHolderName: ''
+const { handleSubmit, errors } = useForm({
+  validationSchema: schema,
 });
 
-const errors = reactive<Errors>({
-  cardNumber: '',
-  expiryDate: '',
-  cvv: '',
-  cardHolderName: ''
-});
+const { value: cardNumber } = useField('cardNumber');
+const { value: cardHolder } = useField('cardHolder');
+const { value: expirationDate } = useField('expirationDate');
+const { value: cvv } = useField('cvv');
 
-// Function to handle form submission
-const handleSubmit = () => {
-  // Validate the form data using Yup schema
-  schema
-      .validate(form, { abortEarly: false })
-      .then(() => {
-        // Form is valid, proceed with form submission logic
-        console.log('Form submitted successfully', form);
-        // Reset form and errors
-        Object.keys(form).forEach((key) => {
-          form[key as keyof Form] = '';
-        });
-        Object.keys(errors).forEach((key) => {
-          errors[key as keyof Errors] = '';
-        });
-      })
-      .catch((validationErrors) => {
-        // Form is invalid, display validation errors
-        validationErrors.inner.forEach((error: Yup.ValidationError) => {
-          errors[error.path as keyof Errors] = error.message;
-        });
-      });
-};
+const validateForm = handleSubmit(() => {
+  alert('Form Submitted');
+});
 </script>
-
-<style>
-.credit-card-form {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.credit-card-form div {
-  margin-bottom: 15px;
-}
-
-.credit-card-form label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.credit-card-form input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-
-.credit-card-form span {
-  color: red;
-  font-size: 0.9em;
-}
-
-.credit-card-form button {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-</style>

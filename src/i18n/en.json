@@ -1,0 +1,21 @@
+{
+    "header": "Header Content",
+    "step": "Step Content",
+    "main": "Main Content",
+    "footer": "Footer Content",
+    "form": {
+      "title": "Credit Card Form",
+      "name": "Name",
+      "number": "Card Number",
+      "expiry": "Expiry Date",
+      "cvv": "CVV",
+      "errors": {
+        "required": "This field is required",
+        "invalid": "Invalid input",
+        "cardNumber": "Invalid card number",
+        "expiry": "Invalid expiry date",
+        "cvv": "Invalid CVV"
+      }
+    }
+  }
+  
